@@ -2,7 +2,7 @@ name: Dashboard Sync
 
 on:
   schedule:
-    - cron: '30 */2 * * *'   # Every 2 hours at :30 (30min after source syncs)
+    - cron: '30 */2 * * *'
   workflow_dispatch:
 
 jobs:
@@ -18,10 +18,12 @@ jobs:
       - run: npm ci
       - name: Run dashboard sync
         env:
-          RT_SUPABASE_URL:             ${{ secrets.RT_SUPABASE_URL }}
-          RT_SUPABASE_ANON_KEY:        ${{ secrets.RT_SUPABASE_ANON_KEY }}
-          BLUELINE_SUPABASE_URL:       ${{ secrets.BLUELINE_SUPABASE_URL }}
-          BLUELINE_SUPABASE_ANON_KEY:  ${{ secrets.BLUELINE_SUPABASE_ANON_KEY }}
-          DASHBOARD_SUPABASE_URL:      ${{ secrets.DASHBOARD_SUPABASE_URL }}
+          RT_SUPABASE_URL: ${{ secrets.RT_SUPABASE_URL }}
+          RT_SUPABASE_ANON_KEY: ${{ secrets.RT_SUPABASE_ANON_KEY }}
+          BLUELINE_SUPABASE_URL: ${{ secrets.BLUELINE_SUPABASE_URL }}
+          BLUELINE_SUPABASE_ANON_KEY: ${{ secrets.BLUELINE_SUPABASE_ANON_KEY }}
+          KMNO_SUPABASE_URL: ${{ secrets.KMNO_SUPABASE_URL }}
+          KMNO_SUPABASE_ANON_KEY: ${{ secrets.KMNO_SUPABASE_ANON_KEY }}
+          DASHBOARD_SUPABASE_URL: ${{ secrets.DASHBOARD_SUPABASE_URL }}
           DASHBOARD_SUPABASE_SERVICE_KEY: ${{ secrets.DASHBOARD_SUPABASE_SERVICE_KEY }}
         run: node src/sync.js
