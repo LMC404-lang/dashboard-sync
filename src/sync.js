@@ -123,7 +123,7 @@ async function syncSource(source, dashClient) {
         continue;
       }
 
-      // 2. Add empresa_id and handle nulls in PK columns
+      // 2. Add empresa_id, handle nulls, and deduplicate
       const enrichedRows = rows.map(row => {
         const enriched = { empresa_id, ...row };
 
@@ -135,11 +135,24 @@ async function syncSource(source, dashClient) {
         return enriched;
       });
 
+      // Deduplicate by conflict key to avoid "cannot affect row a second time"
+      const conflictFields = conflict.split(',');
+      const seen = new Map();
+      for (const row of enrichedRows) {
+        const key = conflictFields.map(f => row[f.trim()] ?? '').join('|');
+        seen.set(key, row); // last one wins
+      }
+      const dedupedRows = Array.from(seen.values());
+
+      if (dedupedRows.length < enrichedRows.length) {
+        log(`  [${empresa_id}] ${target}: deduped ${enrichedRows.length} → ${dedupedRows.length}`);
+      }
+
       // 3. Upsert into dashboard
       log(`  [${empresa_id}] Writing ${target}...`);
-      await upsertBatch(dashClient, target, enrichedRows, conflict);
+      await upsertBatch(dashClient, target, dedupedRows, conflict);
 
-      totalRows += rows.length;
+      totalRows += dedupedRows.length;
       log(`  [${empresa_id}] ${target}: done (${rows.length} rows)`);
 
     } catch (err) {
