@@ -11,6 +11,11 @@ const SOURCES = [
     key: process.env.RT_SUPABASE_ANON_KEY,
   },
   {
+    empresa_id: 'KMNO',
+    url: process.env.KMNO_SUPABASE_URL,
+    key: process.env.KMNO_SUPABASE_ANON_KEY,
+  },
+  {
     empresa_id: 'BLUELINE',
     url: process.env.BLUELINE_SUPABASE_URL,
     key: process.env.BLUELINE_SUPABASE_ANON_KEY,
